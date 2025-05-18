@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rasi Javana - Sistem Cerdas Pertanian Berbasis Astronomi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e3c72;
+            --secondary: #2a5298;
+            --accent: #ffd700;
+            --text-light: #f8f9fa;
+            --text-dark: #212529;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #17a2b8;
+        }
+        
+        body {
+            font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-dark);
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .javana-container {
+            background: linear-gradient(145deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            color: var(--text-light);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .javana-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .javana-title {
+            font-size: 2.8em;
+            margin: 0;
+            color: var(--accent);
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .javana-subtitle {
+            font-size: 1.3em;
+            margin-top: 10px;
+            font-style: italic;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .real-time-info {
+            background-color: rgba(0, 0, 0, 0.25);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .time-data {
+            text-align: center;
+            padding: 12px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        
+        .time-data:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+        
+        .data-label {
+            font-size: 0.95em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .data-value {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 8px;
+        }
+        
+        .data-icon {
+            font-size: 1.2em;
+        }
+        
+        .javana-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .constellation-container {
+            position: relative;
+            height: 100%;
+            min-height: 400px;
+        }
+        
+        .constellation {
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><circle cx="200" cy="120" r="6" fill="%23ffd700" id="star1"/><circle cx="160" cy="180" r="5" fill="%23ffd700" id="star2"/><circle cx="240" cy="180" r="5" fill="%23ffd700" id="star3"/><circle cx="140" cy="240" r="4" fill="%23ffd700" id="star4"/><circle cx="200" cy="240" r="4" fill="%23ffd700" id="star5"/><circle cx="260" cy="240" r="4" fill="%23ffd700" id="star6"/><line x1="200" y1="120" x2="160" y2="180" stroke="%23ffd700" stroke-width="2" id="line1"/><line x1="200" y1="120" x2="240" y2="180" stroke="%23ffd700" stroke-width="2" id="line2"/><line x1="160" y1="180" x2="140" y2="240" stroke="%23ffd700" stroke-width="2" id="line3"/><line x1="240" y1="180" x2="260" y2="240" stroke="%23ffd700" stroke-width="2" id="line4"/><line x1="140" y1="240" x2="200" y2="240" stroke="%23ffd700" stroke-width="2" id="line5"/><line x1="200" y1="240" x2="260" y2="240" stroke="%23ffd700" stroke-width="2" id="line6"/></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+            position: relative;
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+            background-size: contain;
+        }
+        
+        .constellation-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 3;
+        }
+        
+        .control-btn {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .control-btn:hover {
+            background-color: var(--accent);
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+        
+        .star-info {
+            display: flex;
+            flex-direction: column;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .info-title {
+            color: var(--accent);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 12px;
+            margin-top: 0;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-title i {
+            font-size: 1.2em;
+        }
+        
+        .recommendation {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 12px 12px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .recommendation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, transparent 100%);
+            z-index: -1;
+        }
+        
+        .recommendation-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--accent);
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .recommendation-details {
+            line-height: 1.7;
+        }
+        
+        .recommendation-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .season-calendar {
+            margin-top: 15px;
+            display: grid;
+            gap: 15px;
+        }
+        
+        .season {
+            display: flex;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 18px;
+            border-radius: 12px;
+            transition: all 0.4s;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+        
+        .season:hover {
+            transform: translateX(8px);
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        .season-icon {
+            width: 42px;
+            height: 42px;
+            background-color: rgba(255, 215, 0, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.4em;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        
+        .season:hover .season-icon {
+            background-color: rgba(255, 215, 0, 0.3);
+            transform: rotate(5deg);
+        }
+        
+        .season-details {
+            flex: 1;
+        }
+        
+        .season-name {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .season-status {
+            font-size: 0.8em;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .season-date {
+            font-size: 0.95em;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        .active-season {
+            background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%);
+            border-left: 4px solid var(--accent);
+        }
+        
+        .active-season .season-status {
+            background-color: var(--accent);
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .stars-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: 1;
+            background-image: 
+                radial-gradient(circle at 20% 30%, white 1px, transparent 1px),
+                radial-gradient(circle at 80% 20%, white 1px, transparent 1px),
+                radial-gradient(circle at 40% 70%, white 1px, transparent 1px),
+                radial-gradient(circle at 60% 80%, white 1px, transparent 1px);
+            background-size: 200px 200px, 300px 300px, 400px 400px, 500px 500px;
+            animation: twinkle 8s infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.05; }
+            50% { opacity: 0.15; }
+            100% { opacity: 0.1; }
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.95em;
+            opacity: 0.9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .location-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .location-btn {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .location-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+        }
+        
+        .last-update {
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+        
+        .crop-selector {
+            margin-top: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 12px;
+        }
+        
+        .crop-selector label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .crop-selector select {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: none;
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            font-family: inherit;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .crop-selector select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(255,215,0,0.2);
+        }
+        
+        .crop-info {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .crop-info.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--accent);
+            color: var(--primary);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            color: inherit;
+        }
+        
+        /* Night mode styles */
+        body.night-mode {
+            background-color: #121212;
+        }
+        
+        body.night-mode .javana-container {
+            background: linear-gradient(145deg, #0a1a3a 0%, #142850 100%);
+        }
+        
+        body.night-mode .constellation {
+            filter: brightness(1.2);
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .javana-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .constellation-container {
+                min-height: 350px;
+            }
+            
+            .real-time-info {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .javana-container {
+                padding: 20px;
+            }
+            
+            .javana-title {
+                font-size: 2.2em;
+            }
+            
+            .real-time-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .location-info {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="javana-container">
+        <div class="stars-bg"></div>
+        
+        <div class="javana-header">
+            <h1 class="javana-title"><i class="fas fa-star"></i> Rasi Javana</h1>
+            <p class="javana-subtitle">Sistem Cerdas Pertanian Berbasis Astronomi Tradisional</p>
+        </div>
+        
+        <div class="real-time-info">
+            <div class="time-data">
+                <div class="data-label"><i class="fas fa-clock data-icon"></i> Waktu Lokal</div>
+                <div class="data-value" id="current-time">Loading...</div>
+            </div>
+            <div class="time-data">
+                <div class="data-label"><i class="fas fa-compass data-icon"></i> Posisi Rasi</div>
+                <div class="data-value" id="constellation-position">Loading...</div>
+            </div>
+            <div class="time-data">
+                <div class="data-label"><i class="fas fa-eye data-icon"></i> Keterlihatan</div>
+                <div class="data-value" id="constellation-visibility">Loading...</div>
+            </div>
+            <div class="time-data">
+                <div class="data-label"><i class="fas fa-moon data-icon"></i> Fase Bulan</div>
+                <div class="data-value" id="moon-phase">Loading...</div>
+            </div>
+        </div>
+        
+        <div class="javana-content">
+            <div class="constellation-container">
+                <div class="constellation" id="dynamic-constellation" aria-label="Gambar rasi bintang Javana"></div>
+                
+                <div class="constellation-controls">
+                    <button class="control-btn" id="zoom-in-btn" title="Perbesar"><i class="fas fa-search-plus"></i></button>
+                    <button class="control-btn" id="reset-view-btn" title="Reset"><i class="fas fa-sync-alt"></i></button>
+                    <button class="control-btn" id="zoom-out-btn" title="Perkecil"><i class="fas fa-search-minus"></i></button>
+                    <button class="control-btn" id="night-mode-btn" title="Mode Malam"><i class="fas fa-moon"></i></button>
+                </div>
+            </div>
+            
+            <div class="star-info">
+                <h3 class="info-title"><i class="fas fa-calendar-check"></i> Kalender Pertanian</h3>
+                
+                <div class="crop-selector">
+                    <label for="crop-type"><i class="fas fa-seedling"></i> Pilih Jenis Tanaman:</label>
+                    <select id="crop-type">
+                        <option value="">-- Semua Tanaman --</option>
+                        <option value="padi">Padi</option>
+                        <option value="jagung">Jagung</option>
+                        <option value="kedelai">Kedelai</option>
+                        <option value="sayuran">Sayuran</option>
+                        <option value="buah">Buah-buahan</option>
+                    </select>
+                    
+                    <div class="crop-info" id="padi-info">
+                        <h4><i class="fas fa-rice"></i> Rekomendasi Khusus Padi:</h4>
+                        <p>Berdasarkan posisi Rasi Javana, varietas padi yang cocok ditanam saat ini adalah <strong>Ciherang</strong> atau <strong>Inpari 32</strong>. Pemupukan pertama direkomendasikan dalam 2 minggu setelah tanam.</p>
+                    </div>
+                    
+                    <div class="crop-info" id="jagung-info">
+                        <h4><i class="fas fa-corn"></i> Rekomendasi Khusus Jagung:</h4>
+                        <p>Varietas jagung <strong>Bisi 18</strong> atau <strong>Pioneer 35</strong> cocok untuk musim ini. Jarak tanam ideal 70x20 cm dengan kedalaman 3-5 cm.</p>
+                    </div>
+                    
+                    <div class="crop-info" id="kedelai-info">
+                        <h4><i class="fas fa-seedling"></i> Rekomendasi Khusus Kedelai:</h4>
+                        <p>Varietas <strong>Dering 1</strong> atau <strong>Grobogan</strong> memberikan hasil optimal. Gunakan jarak tanam 40x15 cm dengan 2-3 biji per lubang.</p>
+                    </div>
+                    
+                    <div class="crop-info" id="sayuran-info">
+                        <h4><i class="fas fa-carrot"></i> Rekomendasi Khusus Sayuran:</h4>
+                        <p>Sayuran daun seperti kangkung dan bayam cocok ditanam sekarang. Untuk sayuran buah, tomat dan cabai varietas lokal memberikan hasil baik.</p>
+                    </div>
+                    
+                    <div class="crop-info" id="buah-info">
+                        <h4><i class="fas fa-apple-alt"></i> Rekomendasi Khusus Buah:</h4>
+                        <p>Musim ini baik untuk perawatan tanaman buah. Lakukan pemangkasan dan pemupukan untuk persiapan pembuahan di musim berikutnya.</p>
+                    </div>
+                </div>
+                
+                <div class="recommendation" id="today-recommendation">
+                    <div class="recommendation-title"><i class="fas fa-bullhorn"></i> Rekomendasi Hari Ini</div>
+                    <div class="recommendation-details" id="recommendation-details">Menganalisis posisi bintang dan kondisi bulan...</div>
+                    <div class="recommendation-meta">
+                        <div class="meta-item"><i class="fas fa-star"></i> <span id="star-quality">Kualitas Hari: -</span></div>
+                        <div class="meta-item"><i class="fas fa-cloud"></i> <span id="weather-impact">Pengaruh Cuaca: Normal</span></div>
+                    </div>
+                </div>
+                
+                <div class="season-calendar">
+                    <div class="season" id="planting-season">
+                        <div class="season-icon">🌱</div>
+                        <div class="season-details">
+                            <div class="season-name">Masa Tanam <span class="season-status" id="planting-status">-</span></div>
+                            <div class="season-date" id="planting-dates">Biasa April-Mei atau Juli-Agustus</div>
+                        </div>
+                    </div>
+                    
+                    <div class="season" id="harvest-season">
+                        <div class="season-icon">🌾</div>
+                        <div class="season-details">
+                            <div class="season-name">Masa Panen <span class="season-status" id="harvest-status">-</span></div>
+                            <div class="season-date" id="harvest-dates">Biasa September-Oktober</div>
+                        </div>
+                    </div>
+                    
+                    <div class="season" id="land-prep-season">
+                        <div class="season-icon">🛠️</div>
+                        <div class="season-details">
+                            <div class="season-name">Persiapan Lahan <span class="season-status" id="prep-status">-</span></div>
+                            <div class="season-date" id="prep-dates">Biasa November-Maret</div>
+                        </div>
+                    </div>
+                    
+                    <div class="season" id="fertilizer-season">
+                        <div class="season-icon">🧪</div>
+                        <div class="season-details">
+                            <div class="season-name">Pemupukan <span class="season-status" id="fertilizer-status">-</span></div>
+                            <div class="season-date" id="fertilizer-dates">Sesuai fase pertumbuhan tanaman</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="location-info">
+                <i class="fas fa-map-marker-alt"></i>
+                <span id="location-text">Lokasi belum ditentukan</span>
+                <button class="location-btn" id="location-btn">
+                    <i class="fas fa-location-arrow"></i> <span>Ubah</span>
+                </button>
+            </div>
+            
+            <div class="last-update">
+                <i class="fas fa-sync-alt"></i> Terakhir diperbarui: <span id="update-time"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <div id="notification-message">Pesan notifikasi</div>
+        <button class="notification-close" id="notification-close">&times;</button>
+    </div>
+
+    <script>
+        // Data konstelasi lengkap
+        const javanaData = {
+            // Data posisi berdasarkan bulan (0-11)
+            monthlyPositions: [
+                { 
+                    month: 0, name: "Januari", pos: "Barat Laut", visibility: "Rendah", 
+                    rotation: -30, elevation: [15, 25, 35, 40, 35, 25], 
+                    recommendation: {
+                        general: "Persiapan lahan - Waktu ideal untuk membersihkan lahan dan memperbaiki irigasi",
+                        padi: "Persiapan pembibitan padi untuk tanam awal musim",
+                        jagung: "Pengolahan tanah untuk persiapan tanam jagung musim berikutnya",
+                        kedelai: "Penyiapan benih kedelai varietas unggul",
+                        sayuran: "Tanam sayuran daun yang tahan dingin seperti bayam dan kangkung",
+                        buah: "Pemangkasan tanaman buah untuk persiapan pembuahan"
+                    },
+                    activities: ["Pengolahan tanah", "Perbaikan saluran air", "Penyiapan benih"]
+                },
+                { 
+                    month: 1, name: "Februari", pos: "Barat Laut", visibility: "Rendah", 
+                    rotation: -20, elevation: [20, 30, 40, 45, 40, 30],
+                    recommendation: {
+                        general: "Persiapan lahan - Lanjutkan perbaikan infrastruktur pertanian",
+                        padi: "Pembibitan padi varietas unggul untuk tanam awal",
+                        jagung: "Pemupukan dasar lahan untuk jagung",
+                        kedelai: "Pengolahan tanah akhir untuk kedelai",
+                        sayuran: "Tanam bawang merah dan cabai rawit",
+                        buah: "Pemupukan dasar tanaman buah"
+                    },
+                    activities: ["Pemupukan dasar", "Penyemaian", "Pembuatan bedengan"]
+                },
+                { 
+                    month: 2, name: "Maret", pos: "Barat", visibility: "Sedang", 
+                    rotation: -10, elevation: [25, 35, 45, 50, 45, 35],
+                    recommendation: {
+                        general: "Akhir persiapan - Mulai pengolahan tanah dasar",
+                        padi: "Tanam padi awal musim dengan varietas umur pendek",
+                        jagung: "Mulai tanam jagung hibrida",
+                        kedelai: "Tanam kedelai varietas unggul",
+                        sayuran: "Tanam sayuran buah seperti tomat dan terong",
+                        buah: "Perawatan pembungaan tanaman buah"
+                    },
+                    activities: ["Tanam awal", "Penyulaman", "Pengairan pertama"]
+                },
+                { 
+                    month: 3, name: "April", pos: "Barat Daya", visibility: "Tinggi", 
+                    rotation: 0, elevation: [30, 40, 50, 55, 50, 40],
+                    recommendation: {
+                        general: "Awal tanam - Tanam padi varietas awal musim",
+                        padi: "Pemupukan pertama padi usia 15 HST",
+                        jagung: "Pemupukan susulan jagung",
+                        kedelai: "Penyiangan pertama kedelai",
+                        sayuran: "Pemupukan sayuran daun",
+                        buah: "Pengendalian hama tanaman buah"
+                    },
+                    activities: ["Pemupukan", "Penyiangan", "Pengendalian hama"]
+                },
+                { 
+                    month: 4, name: "Mei", pos: "Selatan", visibility: "Sangat Tinggi", 
+                    rotation: 15, elevation: [35, 45, 55, 60, 55, 45],
+                    recommendation: {
+                        general: "Puncak masa tanam - Tanam palawija dan sayuran",
+                        padi: "Pemupukan kedua padi dan pengendalian hama",
+                        jagung: "Penyiangan dan pembumbunan jagung",
+                        kedelai: "Pemupukan susulan kedelai",
+                        sayuran: "Panen sayuran daun awal",
+                        buah: "Pemeliharaan buah muda"
+                    },
+                    activities: ["Penyulaman", "Pembumbunan", "Pengairan"]
+                },
+                { 
+                    month: 5, name: "Juni", pos: "Tenggara", visibility: "Sangat Tinggi", 
+                    rotation: 30, elevation: [40, 50, 60, 65, 60, 50],
+                    recommendation: {
+                        general: "Perawatan tanaman - Pemupukan dan pengendalian hama",
+                        padi: "Pengairan intensif fase generatif padi",
+                        jagung: "Pengendalian hama penggerek batang",
+                        kedelai: "Penyemprotan pestisida organik",
+                        sayuran: "Panen sayuran buah pertama",
+                        buah: "Pembungkusan buah"
+                    },
+                    activities: ["Pengendalian hama", "Pemupukan susulan", "Pengairan"]
+                },
+                { 
+                    month: 6, name: "Juli", pos: "Timur", visibility: "Tinggi", 
+                    rotation: 45, elevation: [45, 55, 65, 70, 65, 55],
+                    recommendation: {
+                        general: "Perawatan lanjutan - Pengairan intensif",
+                        padi: "Tanam padi kedua di lahan sawah",
+                        jagung: "Panen jagung musim pertama",
+                        kedelai: "Panen kedelai awal",
+                        sayuran: "Tanam sayuran musim kedua",
+                        buah: "Panen buah musiman"
+                    },
+                    activities: ["Pengairan", "Panen awal", "Tanam kedua"]
+                },
+                { 
+                    month: 7, name: "Agustus", pos: "Timur Laut", visibility: "Tinggi", 
+                    rotation: 30, elevation: [40, 50, 60, 65, 60, 50],
+                    recommendation: {
+                        general: "Persiapan panen - Kurangi pengairan",
+                        padi: "Pengeringan lahan sebelum panen padi",
+                        jagung: "Tanam jagung kedua di lahan kering",
+                        kedelai: "Persiapan tanam kedelai kedua",
+                        sayuran: "Pemupukan sayuran musim kedua",
+                        buah: "Pemangkasan pasca panen"
+                    },
+                    activities: ["Pengeringan lahan", "Persiapan panen", "Tanam kedua"]
+                },
+                { 
+                    month: 8, name: "September", pos: "Utara", visibility: "Sangat Tinggi", 
+                    rotation: 15, elevation: [35, 45, 55, 60, 55, 45],
+                    recommendation: {
+                        general: "Awal panen - Panen padi dan palawija",
+                        padi: "Panen padi dan pengolahan hasil",
+                        jagung: "Panen jagung kedua",
+                        kedelai: "Tanam kedelai kedua",
+                        sayuran: "Panen sayuran musim kedua",
+                        buah: "Pengemasan dan pemasaran hasil"
+                    },
+                    activities: ["Panen", "Pengolahan hasil", "Penyimpanan"]
+                },
+                { 
+                    month: 9, name: "Oktober", pos: "Barat Laut", visibility: "Tinggi", 
+                    rotation: 0, elevation: [30, 40, 50, 55, 50, 40],
+                    recommendation: {
+                        general: "Puncak panen - Panen dan pengolahan hasil",
+                        padi: "Pengeringan gabah dan penyimpanan",
+                        jagung: "Pengolahan jagung untuk benih",
+                        kedelai: "Perawatan kedelai kedua",
+                        sayuran: "Persiapan tanam sayuran musim hujan",
+                        buah: "Pemupukan pasca panen"
+                    },
+                    activities: ["Pengolahan hasil", "Penyimpanan", "Pemasaran"]
+                },
+                { 
+                    month: 10, name: "November", pos: "Barat", visibility: "Sedang", 
+                    rotation: -15, elevation: [25, 35, 45, 50, 45, 35],
+                    recommendation: {
+                        general: "Pasca panen - Pengolahan hasil dan pembersihan lahan",
+                        padi: "Penyimpanan benih untuk musim berikutnya",
+                        jagung: "Pembersihan lahan dari sisa tanaman",
+                        kedelai: "Panen akhir kedelai",
+                        sayuran: "Tanam sayuran musim hujan",
+                        buah: "Perlindungan tanaman dari hujan lebat"
+                    },
+                    activities: ["Pembersihan lahan", "Penyimpanan benih", "Perbaikan tanah"]
+                },
+                { 
+                    month: 11, name: "Desember", pos: "Barat Laut", visibility: "Rendah", 
+                    rotation: -25, elevation: [20, 30, 40, 45, 40, 30],
+                    recommendation: {
+                        general: "Persiapan lahan - Perbaikan tanah untuk musim berikutnya",
+                        padi: "Perendaman benih untuk uji kualitas",
+                        jagung: "Seleksi benih jagung unggul",
+                        kedelai: "Penyortiran benih kedelai",
+                        sayuran: "Perlindungan sayuran dari curah hujan tinggi",
+                        buah: "Pemangkasan sanitasi tanaman buah"
+                    },
+                    activities: ["Perbaikan tanah", "Seleksi benih", "Perencanaan musim tanam"]
+                }
+            ],
+            
+            // Rekomendasi berdasarkan kualitas hari
+            dailyRecommendations: {
+                excellent: [
+                    "Hari sangat ideal untuk memulai tanam",
+                    "Waktu terbaik untuk pemupukan dan perawatan",
+                    "Kondisi optimal untuk panen dengan hasil maksimal",
+                    "Peluang keberhasilan tinggi untuk semua kegiatan pertanian"
+                ],
+                good: [
+                    "Hari yang baik untuk kegiatan tanam",
+                    "Waktu yang tepat untuk pemupukan",
+                    "Kondisi mendukung untuk panen",
+                    "Perawatan tanaman akan memberikan hasil optimal"
+                ],
+                fair: [
+                    "Bisa dilakukan penanaman dengan perhatian ekstra",
+                    "Perawatan tanaman disarankan hari ini",
+                    "Panen bisa dilakukan dengan hasil cukup baik",
+                    "Perhatikan kondisi cuaca sebelum memulai kegiatan"
+                ],
+                poor: [
+                    "Hindari penanaman di hari ini jika memungkinkan",
+                    "Lebih baik fokus pada persiapan lahan",
+                    "Tunda panen kecuali sangat mendesak",
+                    "Kondisi kurang mendukung kegiatan pertanian utama"
+                ]
+            },
+            
+            // Data tanaman dan rekomendasi khusus
+            crops: {
+                padi: {
+                    varieties: [
+                        { name: "Ciherang", season: "awal", duration: 110 },
+                        { name: "Inpari 32", season: "awal", duration: 105 },
+                        { name: "Mentik Wangi", season: "akhir", duration: 125 }
+                    ],
+                    plantingTips: "Gunakan sistem jajar legowo 2:1 untuk hasil optimal",
+                    fertilizerSchedule: [
+                        { day: 0, type: "NPK", dose: "200 kg/ha" },
+                        { day: 21, type: "Urea", dose: "100 kg/ha" },
+                        { day: 45, type: "SP-36", dose: "75 kg/ha" }
+                    ]
+                },
+                jagung: {
+                    varieties: [
+                        { name: "Bisi 18", season: "awal", duration: 85 },
+                        { name: "Pioneer 35", season: "akhir", duration: 95 }
+                    ],
+                    plantingTips: "Gunakan jarak tanam 70x20 cm dengan 1 biji per lubang",
+                    fertilizerSchedule: [
+                        { day: 0, type: "NPK", dose: "300 kg/ha" },
+                        { day: 25, type: "Urea", dose: "150 kg/ha" }
+                    ]
+                },
+                kedelai: {
+                    varieties: [
+                        { name: "Dering 1", season: "awal", duration: 75 },
+                        { name: "Grobogan", season: "akhir", duration: 85 }
+                    ],
+                    plantingTips: "Inokulasi benih dengan Rhizobium sebelum tanam",
+                    fertilizerSchedule: [
+                        { day: 0, type: "SP-36", dose: "100 kg/ha" },
+                        { day: 30, type: "KCL", dose: "50 kg/ha" }
+                    ]
+                }
+            },
+            
+            // Data fase bulan
+            moonPhases: [
+                { name: "Bulan Baru", emoji: "🌑", effect: "Tanam sayuran daun" },
+                { name: "Bulan Sabit Awal", emoji: "🌒", effect: "Tanam tanaman berbuah" },
+                { name: "Perempat Pertama", emoji: "🌓", effect: "Pemupukan awal" },
+                { name: "Bulan Cembung Awal", emoji: "🌔", effect: "Perawatan intensif" },
+                { name: "Bulan Purnama", emoji: "🌕", effect: "Hindari penanaman" },
+                { name: "Bulan Cembung Akhir", emoji: "🌖", effect: "Panen optimal" },
+                { name: "Perempat Akhir", emoji: "🌗", effect: "Pemangkasan" },
+                { name: "Bulan Sabit Akhir", emoji: "🌘", effect: "Persiapan lahan" }
+            ]
+        };
+
+        // Variabel state aplikasi
+        const appState = {
+            currentCrop: "",
+            userLocation: null,
+            nightMode: false,
+            constellationScale: 1,
+            constellationRotation: 0
+        };
+
+        // Inisialisasi
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved location
+            loadSavedLocation();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Start real-time updates
+            updateTime();
+            updateConstellation();
+            updateCropInfo();
+            
+            // Update setiap menit
+            setInterval(updateTime, 60000);
+            // Update setiap jam
+            setInterval(updateConstellation, 3600000);
+            
+            // Tampilkan notifikasi selamat datang
+            showNotification("Selamat datang di Rasi Javana! Sistem ini akan membantu Anda merencanakan kegiatan pertanian berdasarkan posisi bintang.");
+        });
+
+        // Fungsi untuk update waktu secara real-time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('id-ID');
+            document.getElementById('update-time').textContent = now.toLocaleString('id-ID');
+        }
+
+        // Fungsi utama untuk update tampilan
+        function updateConstellation() {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentHour = now.getHours();
+            const currentDate = now.getDate();
+            const currentDay = now.getDay();
+            
+            // Hitung fase bulan (sederhana)
+            const moonPhaseIndex = Math.floor((currentDate / 29.53 * 8)) % 8;
+            const moonPhase = javanaData.moonPhases[moonPhaseIndex];
+            
+            // Dapatkan data konstelasi bulan ini
+            const constData = javanaData.monthlyPositions[currentMonth];
+            
+            // Update info real-time
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('id-ID');
+            document.getElementById('update-time').textContent = now.toLocaleString('id-ID');
+            document.getElementById('constellation-position').textContent = `${constData.pos} (${getElevation(currentHour)}°)`;
+            document.getElementById('constellation-visibility').textContent = constData.visibility;
+            document.getElementById('moon-phase').textContent = `${moonPhase.emoji} ${moonPhase.name}`;
+            
+            // Update rotasi konstelasi
+            const rotation = constData.rotation + (currentHour/24 * 15);
+            appState.constellationRotation = rotation;
+            updateConstellationView();
+            
+            // Update rekomendasi
+            updateRecommendation(currentMonth, moonPhaseIndex, currentDate, currentDay);
+            
+            // Update status musim
+            updateSeasonStatus(currentMonth);
+            
+            // Update kualitas hari
+            updateDayQuality(currentDate, moonPhaseIndex);
+        }
+
+        // Hitung elevasi berdasarkan jam
+        function getElevation(hour) {
+            const monthData = javanaData.monthlyPositions[new Date().getMonth()];
+            const elevationIndex = Math.floor(hour / 4);
+            return monthData.elevation[elevationIndex] || 0;
+        }
+
+        // Update rekomendasi berdasarkan bulan dan fase bulan
+        function updateRecommendation(monthIndex, moonPhaseIndex, dayOfMonth, dayOfWeek) {
+            const now = new Date();
+            const monthData = javanaData.monthlyPositions[monthIndex];
+            const moonPhase = javanaData.moonPhases[moonPhaseIndex];
+            
+            const recommendationElement = document.getElementById('today-recommendation');
+            const recommendationTitle = document.querySelector('.recommendation-title');
+            const recommendationDetails = document.getElementById('recommendation-details');
+            
+            // Nama hari dalam bahasa Indonesia
+            const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            
+            // Rekomendasi umum berdasarkan bulan
+            let recommendation = monthData.recommendation.general;
+            
+            // Tambahkan rekomendasi khusus tanaman jika dipilih
+            if (appState.currentCrop && monthData.recommendation[appState.currentCrop]) {
+                recommendation += "\n\n" + monthData.recommendation[appState.currentCrop];
+            }
+            
+            // Tambahkan efek fase bulan
+            recommendation += "\n\n" + `Fase ${moonPhase.name}: ${moonPhase.effect}`;
+            
+            // Rekomendasi tambahan berdasarkan hari dalam bulan
+            const dayQuality = getDayQuality(dayOfMonth, moonPhaseIndex);
+            const randomRecommendation = javanaData.dailyRecommendations[dayQuality][
+                Math.floor(Math.random() * javanaData.dailyRecommendations[dayQuality].length)
+            ];
+            
+            recommendation += "\n\n" + randomRecommendation;
+            
+            // Format rekomendasi dengan paragraf
+            const formattedRecommendation = recommendation.split('\n\n').map(para => {
+                // Tambahkan ikon bullet point untuk setiap paragraf
+                return `<p><i class="fas fa-circle" style="font-size: 0.5em; vertical-align: middle; margin-right: 8px;"></i> ${para}</p>`;
+            }).join('');
+            
+            // Update tampilan
+            recommendationTitle.innerHTML = `<i class="fas fa-bullhorn"></i> Rekomendasi ${days[dayOfWeek]}`;
+            recommendationDetails.innerHTML = formattedRecommendation;
+        }
+
+        // Tentukan kualitas hari
+        function getDayQuality(dayOfMonth, moonPhaseIndex) {
+            // Kualitas berdasarkan kombinasi hari dalam bulan dan fase bulan
+            if (moonPhaseIndex === 4) return 'poor'; // Bulan purnama
+            if (dayOfMonth % 7 === 0) return 'excellent'; // Hari baik tradisional
+            if (dayOfMonth % 2 === 0) return 'good';
+            return 'fair';
+        }
+
+        // Update indikator kualitas hari
+        function updateDayQuality(dayOfMonth, moonPhaseIndex) {
+            const quality = getDayQuality(dayOfMonth, moonPhaseIndex);
+            const qualityText = {
+                excellent: "Sangat Baik",
+                good: "Baik",
+                fair: "Sedang",
+                poor: "Kurang"
+            };
+            
+            const qualityColors = {
+                excellent: "#4caf50",
+                good: "#8bc34a",
+                fair: "#ff9800",
+                poor: "#f44336"
+            };
+            
+            const starQualityElement = document.getElementById('star-quality');
+            starQualityElement.textContent = `Kualitas Hari: ${qualityText[quality]}`;
+            
+            // Update warna berdasarkan kualitas
+            starQualityElement.style.color = qualityColors[quality];
+            
+            // Update ikon bintang
+            const starIcon = starQualityElement.previousElementSibling;
+            starIcon.className = {
+                excellent: "fas fa-star",
+                good: "fas fa-star-half-alt",
+                fair: "far fa-star",
+                poor: "fas fa-star"
+            }[quality];
+        }
+
+        // Update status musim tanam/panen
+        function updateSeasonStatus(monthIndex) {
+            const monthData = javanaData.monthlyPositions[monthIndex];
+            
+            // Reset semua status
+            document.querySelectorAll('.season-status').forEach(el => {
+                el.textContent = '-';
+                el.parentElement.parentElement.classList.remove('active-season');
+            });
+            
+            // Update aktivitas musim
+            document.getElementById('planting-dates').textContent = `Aktivitas: ${monthData.activities.join(', ')}`;
+            
+            // Tentukan musim aktif
+            let activeSeason = null;
+            if (monthIndex >= 3 && monthIndex <= 5) { // April-Juni
+                activeSeason = 'planting';
+            } 
+            else if (monthIndex >= 8 && monthIndex <= 9) { // September-Oktober
+                activeSeason = 'harvest';
+            } 
+            else if (monthIndex >= 0 && monthIndex <= 2 || monthIndex >= 10) { // November-Maret
+                activeSeason = 'prep';
+            }
+            else if (monthIndex >= 6 && monthIndex <= 7) { // Juli-Agustus
+                activeSeason = 'fertilizer';
+            }
+            
+            // Set status aktif
+            if (activeSeason) {
+                document.getElementById(`${activeSeason}-status`).textContent = 'Aktif';
+                document.getElementById(`${activeSeason}-season`).classList.add('active-season');
+            }
+        }
+
+        // Update info tanaman yang dipilih
+        function updateCropInfo() {
+            const cropType = document.getElementById('crop-type');
+            cropType.addEventListener('change', function() {
+                appState.currentCrop = this.value;
+                
+                // Sembunyikan semua info tanaman
+                document.querySelectorAll('.crop-info').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // Tampilkan info tanaman yang dipilih
+                if (this.value) {
+                    document.getElementById(`${this.value}-info`).classList.add('active');
+                }
+                
+                // Perbarui rekomendasi
+                updateConstellation();
+            });
+        }
+
+        // Load lokasi yang tersimpan
+        function loadSavedLocation() {
+            const savedLocation = localStorage.getItem('javana-location');
+            const locationText = document.getElementById('location-text');
+            
+            if (savedLocation) {
+                const location = JSON.parse(savedLocation);
+                appState.userLocation = location;
+                locationText.textContent = `${location.lat}, ${location.lon}`;
+                
+                // Tampilkan notifikasi
+                showNotification(`Lokasi Anda telah diatur ke ${location.lat}, ${location.lon}`);
+            } else {
+                locationText.textContent = 'Lokasi belum ditentukan';
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Geolokasi
+            document.getElementById('location-btn').addEventListener('click', getUserLocation);
+            
+            // Kontrol konstelasi
+            document.getElementById('zoom-in-btn').addEventListener('click', () => {
+                appState.constellationScale += 0.1;
+                updateConstellationView();
+            });
+            
+            document.getElementById('zoom-out-btn').addEventListener('click', () => {
+                if (appState.constellationScale > 0.5) {
+                    appState.constellationScale -= 0.1;
+                    updateConstellationView();
+                }
+            });
+            
+            document.getElementById('reset-view-btn').addEventListener('click', () => {
+                appState.constellationScale = 1;
+                const currentMonth = new Date().getMonth();
+                appState.constellationRotation = javanaData.monthlyPositions[currentMonth].rotation;
+                updateConstellationView();
+            });
+            
+            document.getElementById('night-mode-btn').addEventListener('click', toggleNightMode);
+            
+            // Tutup notifikasi
+            document.getElementById('notification-close').addEventListener('click', hideNotification);
+        }
+
+        // Dapatkan lokasi pengguna
+        function getUserLocation() {
+            const locationText = document.getElementById('location-text');
+            
+            if (navigator.geolocation) {
+                locationText.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mendeteksi...';
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude.toFixed(4);
+                        const lon = position.coords.longitude.toFixed(4);
+                        
+                        appState.userLocation = { lat, lon };
+                        locationText.textContent = `${lat}, ${lon}`;
+                        
+                        // Simpan ke localStorage
+                        localStorage.setItem('javana-location', JSON.stringify(appState.userLocation));
+                        
+                        // Tampilkan notifikasi
+                        showNotification(`Lokasi Anda telah diatur ke ${lat}, ${lon}. Rekomendasi sekarang lebih akurat.`);
+                        
+                        // Perbarui data berdasarkan lokasi
+                        updateConstellation();
+                    },
+                    (error) => {
+                        console.error('Error getting location:', error);
+                        locationText.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Gagal';
+                        
+                        setTimeout(() => {
+                            locationText.textContent = appState.userLocation ? 
+                                `${appState.userLocation.lat}, ${appState.userLocation.lon}` : 
+                                'Lokasi belum ditentukan';
+                        }, 2000);
+                    }
+                );
+            } else {
+                locationText.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Tidak didukung';
+                setTimeout(() => {
+                    locationText.textContent = 'Lokasi belum ditentukan';
+                }, 2000);
+            }
+        }
+
+        // Update tampilan konstelasi
+        function updateConstellationView() {
+            const constellation = document.getElementById('dynamic-constellation');
+            constellation.style.transform = `
+                scale(${appState.constellationScale}) 
+                rotate(${appState.constellationRotation}deg)
+            `;
+        }
+
+        // Toggle night mode
+        function toggleNightMode() {
+            appState.nightMode = !appState.nightMode;
+            document.body.classList.toggle('night-mode', appState.nightMode);
+            
+            const btn = document.getElementById('night-mode-btn');
+            btn.innerHTML = appState.nightMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            btn.title = appState.nightMode ? 'Mode Siang' : 'Mode Malam';
+            
+            showNotification(`Mode ${appState.nightMode ? 'Malam' : 'Siang'} diaktifkan`);
+        }
+
+        // Tampilkan notifikasi
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const messageElement = document.getElementById('notification-message');
+            
+            messageElement.textContent = message;
+            notification.classList.add('show');
+            
+            // Sembunyikan otomatis setelah 5 detik
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Sembunyikan notifikasi
+        function hideNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
